@@ -15,7 +15,8 @@ export default function ChatForm({currentChat, ...props }) {
     const [myMessage, setMyMessage] = useState('');
 
     const [isLoading, setIsLoading] = useState(false)
-    const currentUser = useContext(UserContext);
+    
+    const currentUser = useContext(UserContext).currentUser;
 
     const sortComp = (a, b) => a.id - b.id;
     
