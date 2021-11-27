@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext, useMemo, useState } from 'react'
+import React, { useEffect, useRef, useContext, useState } from 'react'
 import MessageItem from './MessageItem';
 import '../Styles/chat-form.css';
 import MyInput from './MyInput/MyInput';
@@ -18,7 +18,7 @@ export default function ChatForm({currentChat, ...props }) {
     
     const currentUser = useContext(UserContext).currentUser;
 
-    const sortComp = (a, b) => a.id - b.id;
+    //const sortComp = (a, b) => a.id - b.id;
     
     const getUserData = id => users.find((u) => u.id === id);
     
