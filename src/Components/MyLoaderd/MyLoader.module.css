@@ -1,0 +1,24 @@
+.loader_body {
+    display: flex;
+    flex: 1;
+    background: gray;
+    align-items: center;
+    justify-content: center;
+}
+.circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 0.5em solid rgba(225, 225, 225, 0.2);
+    border-left: 0.5em solid rgba(225, 225, 225, 1);
+    animation: loading 1s infinite linear;
+}
+
+@keyframes loading {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+}

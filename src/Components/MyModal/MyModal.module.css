@@ -1,0 +1,28 @@
+.modal {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.modal_window {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 250px;
+    width: 50%;
+    box-sizing: content-box;
+}
+.modal_window > * {
+    margin-top: 10px;
+}
+.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
