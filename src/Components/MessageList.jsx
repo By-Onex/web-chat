@@ -15,6 +15,7 @@ export default function MessageList({ isLoading, messagesEl, getUserData, messag
 			<h1>Авторизуйтесь чтобы пользоваться чатом</h1>
 		</div>
 	}
+	console.log('draw MESSAGE LIST');
 	return (
 		<div className='chat-list' ref={messagesEl}>
 			{

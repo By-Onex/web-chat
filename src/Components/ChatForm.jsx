@@ -75,8 +75,9 @@ export default function ChatForm({currentChat, ...props }) {
             return m;
         });
         setMessages(updateMessages);
-    },[newServerMsg]);
-    
+    },[newServerMsg, messages]);
+
+    console.log('draw CHAT FORM');
     return (
         <div className='chat-form'>
            <MessageList
