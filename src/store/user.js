@@ -6,7 +6,7 @@ import { SetToken } from "../API/ApiDB";
 const userSlice = createSlice({
     name: "user",
     initialState: {
-        user: {}
+        user: null
     },
     reducers: {
         login: (state, action) => {
@@ -17,8 +17,9 @@ const userSlice = createSlice({
             SetToken(action.payload.token);
         },
         logout: (state, action) => {
-            state.user = {};
+            state.user = null;
             localStorage.clear();
+            SetToken('');
         },
         checkLocal: (state, action) => {
             const token = localStorage.getItem('token');

@@ -1,22 +1,24 @@
 import React, { useContext } from 'react'
 
-import { UserContext } from '../Context/UserContext';
 import MyButton from './MyButton/MyButton';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/user';
 
-export default function TopNav({showLogin, ...props}) {
+export default function TopNav({ showLogin, ...props }) {
 
-    const userData = useContext(UserContext);
+    const user = useSelector(state => state.user.user)
+    const dispatch = useDispatch();
 
     const Logout = () => {
-        localStorage.clear();
-        userData.setCurrentUser(null);
+        if(user)
+            dispatch(logout());
     }
 
     return (
         <div>
-            {userData.currentUser ?
-            <MyButton onClick={Logout}>Выйти</MyButton> :
-            <MyButton onClick={()=>{ showLogin(true)}}>Войти</MyButton>
+            {user ?
+                <MyButton onClick={Logout}>Выйти</MyButton> :
+                <MyButton onClick={() => { showLogin(true) }}>Войти</MyButton>
             }
         </div>
     )

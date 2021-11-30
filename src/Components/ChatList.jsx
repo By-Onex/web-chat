@@ -1,28 +1,32 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { UserContext } from '../Context/UserContext';
+
 import '../Styles/user-form.css';
 import MyLoader from './MyLoaderd/MyLoader';
 import * as api from "../API/ApiDB";
 
 import { useDispatch, useSelector } from 'react-redux';
-import {addChats} from '../store/chatSlice';
+import {setChats, selectChat} from '../store/chatSlice';
 
 
-export default function ChatList({changeChat, ...props }) {
+export default function ChatList() {
     const dispatch = useDispatch();
     const [isLoadingChats, setIsLoadingChats] = useState(false);
     
-    const chats = useSelector(state => state.chat.chats);
-    const userCont = useContext(UserContext);
-    const currentUser = userCont.currentUser;
+    const chats = useSelector(state => state.chat.chatList);
+    const user = useSelector(state => state.user.user);
     
     useEffect(()=>{
         const fetchData = async () => {
-            const result = await api.GetUserChats(currentUser.id);
-            dispatch(addChats(result));
+            setIsLoadingChats(true);
+            const result = await api.GetUserChats(user.id);
+            dispatch(setChats(result));
+            setIsLoadingChats(false);
         }
-        if(currentUser) fetchData();
-    },[dispatch, currentUser]);
+        if(user) fetchData();
+        else {
+            dispatch(setChats([]));
+        }
+    },[dispatch, user]);
 
     console.log("draw Chat List");
 
@@ -31,7 +35,11 @@ export default function ChatList({changeChat, ...props }) {
             {
                 isLoadingChats ? <MyLoader /> :
                     chats.map(c =>
-                        <div className="user-item" onClick={() => { changeChat(c.id); }} key={c.id}> {c.name}</div>
+                        <div className="user-item"
+                            key={c.id}
+                            onClick={() => { dispatch(selectChat(c.id)); }}>
+                            {c.name}
+                        </div>
                     )
             }
         </div>

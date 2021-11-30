@@ -12,8 +12,6 @@ import { checkLocal } from "./store/user";
 store.dispatch(checkLocal());
 
 function App() {
-  
-  const [currentChat, setCurrentChat] = useState(null);
   const [loginShow, setLoginShow] = useState(false);
   
   console.log('draw App');
@@ -24,8 +22,8 @@ function App() {
         <LoginForm visibility={loginShow} setVisibility={setLoginShow}/>
         <TopNav showLogin={setLoginShow}/>
         <div className={'chat-body'}>
-          <ChatList changeChat={setCurrentChat}/>
-          <ChatForm currentChat={currentChat}/>
+          <ChatList />
+          <ChatForm />
         </div>
       </div>
       </Provider>

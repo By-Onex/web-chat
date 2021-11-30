@@ -1,14 +1,43 @@
-import React, { useEffect, useRef, useContext, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import '../Styles/chat-form.css';
 import MyInput from './MyInput/MyInput';
-import { UserContext } from '../Context/UserContext';
+
 import { GetChatMessages, GetUsersInChat, SendServerMessage } from '../API/ApiDB';
 import MessageList from './MessageList';
+import { useSelector } from 'react-redux';
 
 let id_counter = -1;
-export default function ChatForm({currentChat, ...props }) {
+export default function ChatForm() {
+    //const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+   
+    //Инпут чата
+    const [myMessage, setMyMessage] = useState('');
 
+    const currentChat = useSelector(state => state.chat.current);
+    
+    //При смене чата или добавлении нового сообщения опускаем скрол в низ
+    const messagesEl = useRef(null);
+    useEffect(() => {
+        if (messagesEl) {
+           messagesEl.current.scroll({top: messagesEl.current.scrollHeight , behavior: 'auto' })
+        }
+    }, [currentChat]);
+    
+    console.log('draw CHAT FORM');
+    
+    return (
+        <div className='chat-form'>
+           <MessageList messagesEl={messagesEl} />
+            <div className='chat-bottom'>
+                <MyInput value={myMessage} placeholder={'Сообщение'}
+                    onKeyUp={(e) => { if (e.key === "Enter") {/*sendMessage()*/} }}
+                    onChange={(e) => setMyMessage(e.target.value)}
+                />
+                <div /*onClick={sendMessage}*/>{'>'}</div>
+            </div>
+        </div>)
+    /*
     //Пользователи чата
     const [users, setUsers] = useState([]);
     //Сообщения чата
@@ -17,7 +46,8 @@ export default function ChatForm({currentChat, ...props }) {
     const [myMessage, setMyMessage] = useState('');
     //Загрузка пользователей и сообщений
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-    const currentUser = useContext(UserContext).currentUser;
+    
+    const user = useSelector(state => state.user.user);
 
     const [newServerMsg, setServerMsg] = useState(null);
     const getUserData = id => users.find((u) => u.id === id);
@@ -52,7 +82,7 @@ export default function ChatForm({currentChat, ...props }) {
         //Отправялем сообщение на сервер
         const sendData = {
             id: --id_counter,
-            user_id: currentUser.id,
+            user_id: user.id,
             chat_id: currentChat,
             text: myMessage,
             reading: false,
@@ -60,7 +90,7 @@ export default function ChatForm({currentChat, ...props }) {
         };
         setMessages([...messages, sendData]);
         setMyMessage('');
-        let result = await SendServerMessage(currentChat, currentUser.id, sendData.text);
+        let result = await SendServerMessage(currentChat, user.id, sendData.text);
         result.old_id = sendData.id;
         setServerMsg(result);
     }
@@ -84,7 +114,6 @@ export default function ChatForm({currentChat, ...props }) {
                 isLoading={isLoadingMessages}
                 messagesEl={messagesEl}
                 messages={messages}
-                currentChat={currentChat}
                 getUserData={getUserData}
             />
             <div className='chat-bottom'>
@@ -95,5 +124,5 @@ export default function ChatForm({currentChat, ...props }) {
                 <div onClick={sendMessage}>{'>'}</div>
             </div>
         </div>
-    )
+    )*/
 }
