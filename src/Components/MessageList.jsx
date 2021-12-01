@@ -7,14 +7,13 @@ import MyLoader from './MyLoaderd/MyLoader';
 
 import * as api from '../API/ApiDB';
 
-export default function MessageList({ messagesEl }) {
+export default function MessageList() {
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
 	const dispatch = useDispatch();
 
 	const user = useSelector(store => store.user.user);
 	const currentChat = useSelector(store => store.chat.current);
-	
 	const messages = useSelector(store => findAllMessages(store));
 	
 	useEffect(() => {
@@ -34,22 +33,20 @@ export default function MessageList({ messagesEl }) {
 		if(currentChat && messages.length === 0)
 			fetchData();
 	}, [currentChat, dispatch, messages.length]);
-
-	console.log('draw MESSAGE LIST');
 	
 	if (isLoadingMessages) {
-		return <div className='chat-list' ref={messagesEl}>
+		return <div className='chat-list'>
 			<MyLoader />
 		</div>
 	}
 	if (!user) {
-		return <div className='chat-list' ref={messagesEl}>
+		return <div className='chat-list'>
 			<h1>Авторизуйтесь чтобы пользоваться чатом</h1>
 		</div>
 	}
 	
 	return (
-		<div className='chat-list' ref={messagesEl}>
+		<div className='chat-list'>
 			{
 				currentChat === null ? <h1>Выберите чат</h1> :
 					messages.length === 0 ? <h1>Тут пусто</h1> :

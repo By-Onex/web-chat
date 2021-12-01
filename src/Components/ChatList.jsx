@@ -14,7 +14,6 @@ export default function ChatList() {
     const user = useSelector(state => state.user.user);
     
     useEffect(()=>{
-        console.log('use effect')
         const fetchData = async () => {
             setIsLoadingChats(true);
             const result = await api.GetUserChats(user.id);
@@ -26,8 +25,6 @@ export default function ChatList() {
             dispatch(setChats([]));
         }
     },[dispatch, user]);
-
-    console.log("draw Chat List");
 
     return (
         <div className='user-list'>

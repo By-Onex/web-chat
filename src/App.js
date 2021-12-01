@@ -13,8 +13,7 @@ store.dispatch(checkLocal());
 
 function App() {
   const [loginShow, setLoginShow] = useState(false);
-  
-  console.log('draw App');
+
 
   return(
       <Provider store={store} >

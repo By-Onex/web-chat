@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as api from '../API/ApiDB';
-import { addMessage, changeMessage } from '../store/chatSlice';
+import { addMessage, changeMessage, setCurrentMessage } from '../store/chatSlice';
 import '../Styles/chat-form.css';
 import MessageList from './MessageList';
 import MyInput from './MyInput/MyInput';
@@ -14,16 +14,9 @@ export default function ChatForm() {
     const user = useSelector(state => state.user.user);
     const dispatch = useDispatch();
     //Инпут чата
-    const [myMessage, setMyMessage] = useState('');
+    const currentMessage = useSelector(state => state.chat.currentMessage);
+    //const [myMessage, setMyMessage] = useState('');
     const currentChat = useSelector(state => state.chat.current);
-    //При смене чата или добавлении нового сообщения опускаем скрол в низ
-    const messagesEl = useRef(null);
-    
-    useEffect(() => {
-        if (messagesEl) {
-           messagesEl.current.scroll({top: messagesEl.current.scrollHeight , behavior: 'auto' })
-        }
-    }, [currentChat]);
     
     const SendMessage = async () => {
         if(!currentChat) return;
@@ -31,26 +24,24 @@ export default function ChatForm() {
             id: id_counter--,
             user_id: user.id,
             chat_id: currentChat,
-            text: myMessage,
+            text: currentMessage,
             reading: false,
             status: false,
         }
         dispatch(addMessage(message));
-        setMyMessage('');
+        dispatch(setCurrentMessage(''));
         let result = await api.SendServerMessage(currentChat, user.id, message.text);
         result.old_id = message.id;
         dispatch(changeMessage(result));
     }
-
-    console.log('draw CHAT FORM');
     
     return (
         <div className='chat-form'>
-           <MessageList messagesEl={messagesEl} />
+           <MessageList />
             <div className='chat-bottom'>
-                <MyInput value={myMessage} placeholder={'Сообщение'}
+                <MyInput value={currentMessage} placeholder={'Сообщение'}
                     onKeyUp={(e) => { if (e.key === "Enter") {SendMessage()} }}
-                    onChange={(e) => setMyMessage(e.target.value)}
+                    onChange={(e) => dispatch(setCurrentMessage(e.target.value))}
                 />
                 <div onClick={SendMessage}>{'>'}</div>
             </div>

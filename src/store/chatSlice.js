@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const ChatsSlice = createSlice({
     name: 'chats',
-    initialState: {chatList :[], current:null, users:[] },
+    initialState: {chatList: [], current:null, users: [], currentMessage:'' },
     reducers: {
         /**
         * Установка чатов
@@ -21,7 +21,11 @@ const ChatsSlice = createSlice({
         * Пользователи чата
         */
         setChatUsers(state, action) {
-            state.users = state.users.concat(action.payload);
+        
+            action.payload.forEach(user => {
+                if(!state.users.find(u => u.id === user.id))
+                    state.users.push(user);
+            });
         },
         /**
         * Сообщения чата
@@ -39,7 +43,7 @@ const ChatsSlice = createSlice({
         * Изменение состояния сообщения
         */
         changeMessage(state, action) {
-            let chat = state.chatList.find(c => c.id === state.current);
+            let chat = state.chatList.find(c => c.id === action.payload.chat_id);
             chat.messages = chat.messages.map(m => {
                 if(action.payload.old_id === m.id) {
                     m.id = action.payload.id;
@@ -48,6 +52,9 @@ const ChatsSlice = createSlice({
                 }
                 return m;
             });
+        },
+        setCurrentMessage(state, action){
+            state.currentMessage = action.payload;
         }
     }
 });
@@ -61,6 +68,6 @@ export const findUser = (state, user_id) => state.chat.users.find(u => u.id === 
 
 export const selectAllChats = state => state.chat.chatList;
 
-export const {setChats, selectChat, setChatUsers, setChatMessages, addMessage, changeMessage} = ChatsSlice.actions;
+export const {setCurrentMessage, setChats, selectChat, setChatUsers, setChatMessages, addMessage, changeMessage} = ChatsSlice.actions;
 
 export default ChatsSlice.reducer;
