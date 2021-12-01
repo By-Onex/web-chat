@@ -8,7 +8,7 @@ import MyButton from "./MyButton/MyButton"
 import { UserLogin,  } from '../API/ApiDB';
 import { login } from '../store/user';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export default function LoginForm({visibility, setVisibility}) {
     const dispatch = useDispatch();

@@ -1,11 +1,9 @@
-import React, { useState, useContext, useEffect } from 'react'
-
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectChat, setChats } from '../store/chatSlice';
 import '../Styles/user-form.css';
 import MyLoader from './MyLoaderd/MyLoader';
-import * as api from "../API/ApiDB";
-
-import { useDispatch, useSelector } from 'react-redux';
-import {setChats, selectChat} from '../store/chatSlice';
+import * as api from '../API/ApiDB'
 
 
 export default function ChatList() {
@@ -16,6 +14,7 @@ export default function ChatList() {
     const user = useSelector(state => state.user.user);
     
     useEffect(()=>{
+        console.log('use effect')
         const fetchData = async () => {
             setIsLoadingChats(true);
             const result = await api.GetUserChats(user.id);

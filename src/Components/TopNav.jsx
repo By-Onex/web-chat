@@ -1,8 +1,8 @@
-import React, { useContext } from 'react'
-
-import MyButton from './MyButton/MyButton';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/user';
+import MyButton from './MyButton/MyButton';
+
 
 export default function TopNav({ showLogin, ...props }) {
 

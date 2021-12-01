@@ -26,13 +26,14 @@ export default function MessageList({ messagesEl }) {
 			const messages = await api.GetChatMessages(currentChat);
 			messages.map(m => {
 				m.status = true;
+				return m;
 			})
 			dispatch(setChatMessages(messages));
 			setIsLoadingMessages(false);
 		}
 		if(currentChat && messages.length === 0)
 			fetchData();
-	}, [currentChat, dispatch]);
+	}, [currentChat, dispatch, messages.length]);
 
 	console.log('draw MESSAGE LIST');
 	
