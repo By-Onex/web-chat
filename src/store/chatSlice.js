@@ -55,6 +55,12 @@ const ChatsSlice = createSlice({
         },
         setCurrentMessage(state, action){
             state.currentMessage = action.payload;
+        },
+        clearData(state, action){
+            state.chatList = [];
+            state.current = null;
+            state.users = [];
+            state.currentMessage = '';
         }
     }
 });
@@ -68,6 +74,6 @@ export const findUser = (state, user_id) => state.chat.users.find(u => u.id === 
 
 export const selectAllChats = state => state.chat.chatList;
 
-export const {setCurrentMessage, setChats, selectChat, setChatUsers, setChatMessages, addMessage, changeMessage} = ChatsSlice.actions;
+export const {clearData, setCurrentMessage, setChats, selectChat, setChatUsers, setChatMessages, addMessage, changeMessage} = ChatsSlice.actions;
 
 export default ChatsSlice.reducer;

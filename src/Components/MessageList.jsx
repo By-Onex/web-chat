@@ -20,19 +20,18 @@ export default function MessageList() {
 		const fetchData = async () => {
 			setIsLoadingMessages(true);
 			const users = await api.GetUsersInChat(currentChat);
-			
-			dispatch(setChatUsers(users));
 			const messages = await api.GetChatMessages(currentChat);
 			messages.map(m => {
 				m.status = true;
 				return m;
 			})
+			dispatch(setChatUsers(users));
 			dispatch(setChatMessages(messages));
 			setIsLoadingMessages(false);
 		}
-		if(currentChat && messages.length === 0)
+		if(user && currentChat && messages && messages.length === 0)
 			fetchData();
-	}, [currentChat, dispatch, messages.length]);
+	}, [currentChat, dispatch, messages]);
 	
 	if (isLoadingMessages) {
 		return <div className='chat-list'>

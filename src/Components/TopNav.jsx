@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { clearData } from '../store/chatSlice';
 import { logout } from '../store/user';
 import MyButton from './MyButton/MyButton';
 
@@ -10,8 +11,8 @@ export default function TopNav({ showLogin, ...props }) {
     const dispatch = useDispatch();
 
     const Logout = () => {
-        if(user)
-            dispatch(logout());
+        dispatch(clearData())
+        dispatch(logout());
     }
 
     return (
