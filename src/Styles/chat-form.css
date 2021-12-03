@@ -34,6 +34,12 @@
 }
 
 /*  Message Item   */
+.message-row {
+    display: flex;
+    width: 100%;
+    background: transparent;
+}
+
 .message-item {
     display: flex;
     flex-direction: column;
@@ -46,19 +52,23 @@
 
     margin: 5px;
     padding: 5px;
+    width: fit-content;
     max-width: 50%;
 }
 
 .my-message {
     justify-content: right;
+    align-items: flex-end;
     align-self:flex-end;
+}
+.unreading-message {
+    background: #c5c5c5;
 }
 
 .message-status {
-   
     display: flex;
-
 }
+
 .message-point {
     margin-left: 3px;
     width: 8px;

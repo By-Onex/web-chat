@@ -31,7 +31,7 @@ export default function MessageList() {
 		}
 		if(user && currentChat && messages && messages.length === 0)
 			fetchData();
-	}, [currentChat, dispatch, messages]);
+	}, [currentChat, dispatch, messages, user]);
 	
 	if (isLoadingMessages) {
 		return <div className='chat-list'>

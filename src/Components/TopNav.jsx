@@ -5,7 +5,7 @@ import { logout } from '../store/user';
 import MyButton from './MyButton/MyButton';
 
 
-export default function TopNav({ showLogin, ...props }) {
+export default function TopNav({ showLogin }) {
 
     const user = useSelector(state => state.user.user)
     const dispatch = useDispatch();

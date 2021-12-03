@@ -26,6 +26,7 @@ export default function ChatList() {
         }
     },[dispatch, user]);
 
+
     return (
         <div className='user-list'>
             {
@@ -34,7 +35,9 @@ export default function ChatList() {
                         <div className="user-item"
                             key={c.id}
                             onClick={() => { dispatch(selectChat(c.id)); }}>
-                            {c.name}
+                            <span>{c.name}</span>
+                            { (c.newMessages > 0) && <span>{' '+c.newMessages}</span>}
+                            
                         </div>
                     )
             }

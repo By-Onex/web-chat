@@ -9,6 +9,7 @@ import { UserLogin,  } from '../API/ApiDB';
 import { login } from '../store/user';
 
 import { useDispatch } from 'react-redux';
+import * as ws from '../API/ws';
 
 export default function LoginForm({visibility, setVisibility}) {
     const dispatch = useDispatch();
@@ -22,8 +23,9 @@ export default function LoginForm({visibility, setVisibility}) {
         if(auth_result.error) {
             return console.log(auth_result.error);
         }
-        dispatch(login({user:{id:auth_result.id, name:auth_result.name}, token: auth_result.token}));
+        dispatch(login({user:{id:auth_result.id, name:auth_result.name, expired: auth_result.expired}, token: auth_result.token}));
         setVisibility(false);
+        ws.Connect();
     }
 
     return (
