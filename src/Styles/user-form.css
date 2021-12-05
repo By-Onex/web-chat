@@ -1,17 +1,50 @@
-.user-list {
+.chat-list {
     width: 20%;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid black;
+    overflow: hidden;
+    background: #ebf0f3;
+}
+.chat-body-items {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
 }
 
-.user-item {
+.chat-item {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding: 5px;
+    padding: 15px;
     cursor: pointer;
-    margin: 5px;
+    border-right: 1px solid #dedfe3;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    border: 1px solid black;
+.chat-current {
+    background: #ffff;
+    border: 1px solid #dedfe3;
+    border-left: none;
+    border-right: 1px solid transparent;
+}
+
+.chat-space {
+    border-right: 1px solid #dedfe3;
+    flex: 1;
+}
+
+.chat-unreading-messsages {
+    background: darkcyan;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 25px;
+    font-size: 12px;
+    color:#ffff;
 }

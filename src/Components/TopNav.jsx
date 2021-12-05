@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearData } from '../store/chatSlice';
 import { logout } from '../store/user';
 import MyButton from './MyButton/MyButton';
-
+import * as ws from '../API/ws';
 
 export default function TopNav({ showLogin }) {
 
@@ -13,6 +13,7 @@ export default function TopNav({ showLogin }) {
     const Logout = () => {
         dispatch(clearData())
         dispatch(logout());
+        ws.Close();
     }
 
     return (

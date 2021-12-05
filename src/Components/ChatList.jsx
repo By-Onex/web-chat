@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectChat, setChats } from '../store/chatSlice';
+import * as api from '../API/ApiDB';
+import * as ws from '../API/ws';
+import { setChats } from '../store/chatSlice';
 import '../Styles/user-form.css';
+import ChatItem from './ChatItem';
 import MyLoader from './MyLoaderd/MyLoader';
-import * as api from '../API/ApiDB'
-
 
 export default function ChatList() {
     const dispatch = useDispatch();
@@ -20,7 +21,10 @@ export default function ChatList() {
             dispatch(setChats(result));
             setIsLoadingChats(false);
         }
-        if(user) fetchData();
+        if(user) {
+            ws.Connect();
+            fetchData();
+        }
         else {
             dispatch(setChats([]));
         }
@@ -28,18 +32,16 @@ export default function ChatList() {
 
 
     return (
-        <div className='user-list'>
+        <div className='chat-list'>
             {
                 isLoadingChats ? <MyLoader /> :
-                    chats.map(c =>
-                        <div className="user-item"
-                            key={c.id}
-                            onClick={() => { dispatch(selectChat(c.id)); }}>
-                            <span>{c.name}</span>
-                            { (c.newMessages > 0) && <span>{' '+c.newMessages}</span>}
-                            
-                        </div>
-                    )
+                    <div className='chat-body-items'>
+                        {
+                            chats.map(c => <ChatItem key={c.id} chatData={c} />)
+                        }
+                        
+                        <div className='chat-space' />
+                    </div>
             }
         </div>
     )

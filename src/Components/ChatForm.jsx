@@ -43,7 +43,7 @@ export default function ChatForm() {
                     onKeyUp={(e) => { if (e.key === "Enter") {SendMessage()} }}
                     onChange={(e) => dispatch(setCurrentMessage(e.target.value))}
                 />
-                <div onClick={SendMessage}>{'>'}</div>
+                <div className='chat-bottom-button' onClick={SendMessage}>{'>'}</div>
             </div>
         </div>)
 }

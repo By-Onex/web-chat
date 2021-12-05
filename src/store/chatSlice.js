@@ -19,9 +19,7 @@ const ChatsSlice = createSlice({
             const msg = chat.messages.find(m => m.id === action.payload);
             if(!msg) return;
             msg.reading = true;
-            if(chat.newMessages) {
-                chat.newMessages = chat.newMessages ? chat.newMessages - 1 : 0;
-            }
+            --chat.unreading;
         },
         changeSocketStatus(state, action) {
             state.wsStatus = action.payload;
@@ -30,7 +28,7 @@ const ChatsSlice = createSlice({
         * Установка чатов
         */
         setChats(state, action) {
-            state.chatList = action.payload.map(c => { c.messages = []; return c;});
+            state.chatList = action.payload.map(c => { c.messages = []; c.loading = false; return c;});
         },
         /**
         * Выбор чата
@@ -52,9 +50,9 @@ const ChatsSlice = createSlice({
         */
         setChatMessages(state, action) {
             const chat = state.chatList.find(c => c.id === state.current);
-
-            chat.newMessages = action.payload.filter(m => m.reading === false && m.user_id !== ~~localStorage.getItem('id')).length;
+            //chat.unreading = action.payload.filter(m => m.reading === false && m.user_id !== ~~localStorage.getItem('id')).length;
             chat.messages = action.payload;
+            chat.loading = true;
         },
         /**
         * Новое сообщение
@@ -63,7 +61,7 @@ const ChatsSlice = createSlice({
             console.log(action.payload)
             const chat = state.chatList.find(c => c.id === action.payload.chat_id);
             if(action.payload.user_id !== ~~localStorage.getItem('id')){
-                chat.newMessages = chat.newMessages ? chat.newMessages + 1 : 1;
+                chat.unreading++;
             }
             chat.messages.push(action.payload);
         },
@@ -72,7 +70,9 @@ const ChatsSlice = createSlice({
         */
         changeMessage(state, action) {
             console.log(action.payload);
-            let chat = state.chatList.find(c => c.id === action.payload.chat_id);
+            const chat = state.chatList.find(c => c.id === action.payload.chat_id);
+            if(!chat) return;
+           
             chat.messages = chat.messages.map(m => {
                 if(action.payload.old_id === m.id) {
                     m.id = action.payload.id;
@@ -88,7 +88,7 @@ const ChatsSlice = createSlice({
         setCurrentMessage(state, action){
             state.currentMessage = action.payload;
         },
-        clearData(state, action){
+        clearData(state){
             state = initialState;
         }
     }
@@ -98,6 +98,7 @@ export const findAllMessages = (state) => {
     if(!state.chat.current) return [];
     const chat = state.chat.chatList.find(c => c.id === state.chat.current);
     if(!chat) return [];
+    if(chat.loading === false) return [];
     return chat.messages;
 }
 
