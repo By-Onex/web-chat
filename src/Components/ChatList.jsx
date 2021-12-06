@@ -32,7 +32,7 @@ export default function ChatList() {
         }
     }, [dispatch, user]);
 
-
+    
     return (
         <div className='chat-list'>
             {

@@ -6,7 +6,7 @@ export default function ChatItem({chatData}) {
     const currentChat = useSelector(state => state.chat.current);
     const rootStyles = ['chat-item'];
     if(currentChat === chatData.id) rootStyles.push('chat-current');
-
+    
     return (
         <div className={rootStyles.join(' ')} onClick={() => { dispatch(selectChat(chatData.id))} }>
         <span>{chatData.name}</span>

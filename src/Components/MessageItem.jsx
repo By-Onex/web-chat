@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useCallback} from 'react';
+import React, {useRef, useEffect, useCallback, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Send } from '../API/ws';
 import { findUser, notifyReadMessage } from '../store/chatSlice';
@@ -6,7 +6,7 @@ import MessageStatus from './MessageStatus';
 
 export default function MessageItem({user_id, msg}) {
     const root_classes = ['message-row'];
-
+    const [dateUpdate, setDateUpdate] = useState(getTime(msg.date));
     const dispatch = useDispatch();
     const user = useSelector(state => state.user.user);
     const userData = useSelector(state => findUser(state, user_id));
@@ -23,12 +23,28 @@ export default function MessageItem({user_id, msg}) {
         }
     }, [isMyMsg, msg.reading, dispatch, msg.id]);
 
+    function getTime (date) {
+        
+        let msgDate = date ? new Date(date) : new Date();
+        const diffTime = Math.floor((new Date() - msgDate)/1000);
+        const min = Math.floor(diffTime / 60);
+        if(diffTime <= 60)
+            return 'Только что';
+        else if(min === 1)
+            return `${min} минуту назад`;
+        else if(min >= 1 && min <= 4)
+            return `${min} минуты назад`;
+
+        let time = msgDate.toLocaleTimeString().split(':');
+        return `${time[0]}:${time[1]}`;
+    }
+
     useEffect(() => {
         if (!isMyMsg && msg.reading === false) {
             let timerID;
             const observer = new IntersectionObserver(([entry]) => {
                 if (entry.isIntersecting) {
-                    timerID = setTimeout(HoverEvent, 2000);
+                    timerID = setInterval(HoverEvent, 1000 * 60);
                 }
             });
                 
@@ -39,22 +55,15 @@ export default function MessageItem({user_id, msg}) {
                 clearTimeout(timerID);
             }
         }
-    }, [dispatch, msg.reading, msg.id, isMyMsg, HoverEvent])
-    
-    
-    const getTime = (date) => {
-        let msgDate = date ? new Date(date) : new Date();
-        const diffTime = Math.floor((new Date() - msgDate)/1000);
-        const min = Math.floor(diffTime / 60);
-        
-        if(diffTime <= 60)
-            return 'Только что';
-        else if(min <= 4)
-            return `${min} минуты назад`;
+    }, [dispatch, msg.reading, msg.id, isMyMsg, HoverEvent]);
 
-        let time = msgDate.toLocaleTimeString().split(':');
-        return `${time[0]}:${time[1]}`;
-    }
+    useEffect(()=>{
+        const timerID = setTimeout(()=>{setDateUpdate(Date.now())}, 1000 * 60);
+        return () => {
+            clearTimeout(timerID);
+        }
+    }, [dateUpdate, msg.date]);
+
     return (
         <div className={root_classes.join(' ')} ref={ref} >
             <div className='message-item' onMouseEnter={!isMyMsg && !msg.reading ? HoverEvent: null}>

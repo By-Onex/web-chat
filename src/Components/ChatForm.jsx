@@ -28,6 +28,7 @@ export default function ChatForm() {
             text: currentMessage,
             reading: false,
             status: false,
+            date: Date.now(),
         }
         dispatch(addMessage(message));
         dispatch(setCurrentMessage(''));

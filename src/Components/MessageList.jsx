@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { setChatMessages, setChatUsers, findCurrentChat } from '../store/chatSlice';
 
@@ -14,7 +14,6 @@ export default function MessageList() {
 	const dispatch = useDispatch();
 
 	const user = useSelector(store => store.user.user);
-	//const currentChat = useSelector(store => store.chat.current);
 	const chat = useSelector(store => findCurrentChat(store));
 
 	useEffect(() => {
@@ -36,6 +35,23 @@ export default function MessageList() {
 		else setIsLoadingMessages(false);
 	}, [chat, dispatch, user]);
 
+	const getMessages = useMemo(() => {
+		let list = [];
+		let time = null;
+		if (!chat) return list;
+		const toDay = new Date().toLocaleDateString();
+		chat.messages.forEach(m => {
+			const msgDate = m.date ? new Date(m.date) : new Date();
+			if ( time !== msgDate.toLocaleDateString()) {
+				time = msgDate.toLocaleDateString();
+				
+				list.push(<div className='message-list-day' key={time}>{toDay === time ? 'Сегодня' : time}</div>);
+			}
+			list.push(<MessageItem key={m.id} msg={m} user_id={m.user_id} />);
+		});
+		return list;
+	}, [chat]);
+
 	let body;
 
 	if (isLoadingMessages) {
@@ -51,22 +67,12 @@ export default function MessageList() {
 		body = <div className='chat-info'>
 			<h1 className='chat-info-body'>Выберите чат</h1>
 		</div>;
-	else if (chat.messages.length === 0) {
+	else if (getMessages.length === 0) {
 		body =
 			<div className='chat-info'>
 				<h1 className='chat-info-body'>Тут пусто</h1>
 			</div>;
-	} else {
-		let time = null;
-		body = [];
-		chat.messages.forEach(m => {
-			const msgDate = m.date ? new Date(m.date) : new Date();
-			if (time?.toLocaleDateString() !== msgDate.toLocaleDateString()) {
-				time = msgDate;
-				body.push(<div className='message-list-day' key={time.toLocaleDateString()}>{time.toLocaleDateString()}</div>);
-			}
-			body.push(<MessageItem key={m.id} msg={m} user_id={m.user_id} />);
-		});
-	}
+	} else body = getMessages;
+
 	return <div className='message-list'> {body} </div>;
 }
