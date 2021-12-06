@@ -1,11 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 const initialState = {
+    /**
+    * Чаты пользователя
+    * @type {Array.<{
+    * id:Number,
+    * name:String,
+    * messages:Array.<{id:Number, user_id:Number, text:String, date?:String, reading:Boolean, status:Boolean}>,
+    * loading:Boolean}>} 
+    */
     chatList: [],
+    /**
+    * Текущий ID чата
+    * @type {Number}
+    */
     current:null,
+    /**
+    * Пользователи состоящие в чатах
+    * @type {Array.<{id:Number, name:String}>}
+    */
     users: [],
+    /**
+    * Инпут чата
+    */
     currentMessage:'',
+    /**
+    * Статус вебсокета
+    * @property String
+    */
     wsStatus: 'connecting',
 };
 
@@ -13,6 +35,9 @@ const ChatsSlice = createSlice({
     name: 'chats',
     initialState,
     reducers: {
+        /**
+        * Уведомление о прочтении сообщения
+        */
         notifyReadMessage(state, action){
             const chat = state.chatList.find(c => c.id === state.current);
             if(!chat) return;
@@ -21,6 +46,9 @@ const ChatsSlice = createSlice({
             msg.reading = true;
             --chat.unreading;
         },
+        /**
+        * Состояние вебсокета 
+        */
         changeSocketStatus(state, action) {
             state.wsStatus = action.payload;
         },
@@ -29,6 +57,12 @@ const ChatsSlice = createSlice({
         */
         setChats(state, action) {
             state.chatList = action.payload.map(c => { c.messages = []; c.loading = false; return c;});
+        },
+        /**
+         * Добавить чат
+         */
+        addChat(state, action) {
+            state.chatList.push(action.payload);
         },
         /**
         * Выбор чата
@@ -46,12 +80,11 @@ const ChatsSlice = createSlice({
             });
         },
         /**
-        * Сообщения чата
+        * Установка сообщений чата
         */
         setChatMessages(state, action) {
-            const chat = state.chatList.find(c => c.id === state.current);
-            //chat.unreading = action.payload.filter(m => m.reading === false && m.user_id !== ~~localStorage.getItem('id')).length;
-            chat.messages = action.payload;
+            const chat = state.chatList.find(c => c.id === action.payload.chat_id);
+            chat.messages = action.payload.messages;
             chat.loading = true;
         },
         /**
@@ -94,6 +127,10 @@ const ChatsSlice = createSlice({
     }
 });
 
+/**
+ * 
+ * @returns {Array.<{id:Number, text:String, date?:String, reading:Boolean, status:Boolean}>}
+ */
 export const findAllMessages = (state) => {
     if(!state.chat.current) return [];
     const chat = state.chat.chatList.find(c => c.id === state.chat.current);
@@ -101,11 +138,13 @@ export const findAllMessages = (state) => {
     if(chat.loading === false) return [];
     return chat.messages;
 }
+export const findCurrentChat = (state) => state.chat.chatList.find(c => c.id === state.chat.current);
+
 
 export const findUser = (state, user_id) => state.chat.users.find(u => u.id === user_id);
 
 export const selectAllChats = state => state.chat.chatList;
 
-export const {notifyReadMessage, notifyNewMessages, changeSocketStatus, clearData, setCurrentMessage, setChats, selectChat, setChatUsers, setChatMessages, addMessage, changeMessage} = ChatsSlice.actions;
+export const {addChat, notifyReadMessage, notifyNewMessages, changeSocketStatus, clearData, setCurrentMessage, setChats, selectChat, setChatUsers, setChatMessages, addMessage, changeMessage} = ChatsSlice.actions;
 
 export default ChatsSlice.reducer;

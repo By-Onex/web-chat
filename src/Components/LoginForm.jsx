@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 
 export default function LoginForm({visibility, setVisibility}) {
     const dispatch = useDispatch();
+
     const [userLogin, setUserLogin] = useState('');
     
     const Login = async () => {
@@ -29,9 +30,12 @@ export default function LoginForm({visibility, setVisibility}) {
 
     return (
         <MyModal visibility={visibility} setVisibility={setVisibility}>
-            <h1>Логин</h1>
-            <MyInput value={userLogin} onChange={(e)=>{setUserLogin(e.target.value)}}/>
-            <MyButton onClick={Login}>Войти</MyButton>
+            <form onSubmit={(e) => {e.preventDefault(); Login();}}>
+                <h1>Логин</h1>
+                <MyInput value={userLogin} onChange={(e)=>{setUserLogin(e.target.value)}}/>
+                <MyButton onClick={(e) => {e.preventDefault();Login();}}>Войти</MyButton>
+            </form>
+            
       </MyModal>
     )
 }

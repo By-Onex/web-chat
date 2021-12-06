@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useCallback} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Send } from '../API/ws';
 import { findUser, notifyReadMessage } from '../store/chatSlice';
@@ -15,13 +15,20 @@ export default function MessageItem({user_id, msg}) {
     let isMyMsg = userData && userData.id === user.id;
     if(isMyMsg) root_classes.push('my-message');
     if(!isMyMsg && !msg.reading) root_classes.push('unreading-message');
+    
+    const HoverEvent = useCallback(()=> {
+        if(!isMyMsg && !msg.reading) {
+            dispatch(notifyReadMessage(msg.id));
+            Send('NOTIFY_READ_MESSAGE', { id: msg.id });
+        }
+    }, [isMyMsg, msg.reading, dispatch, msg.id]);
+
     useEffect(() => {
         if (!isMyMsg && msg.reading === false) {
             let timerID;
             const observer = new IntersectionObserver(([entry]) => {
-                if(entry.isIntersecting) {
-                    timerID = setTimeout(() => dispatch(notifyReadMessage(msg.id)), 2000);
-                    Send('NOTIFY_READ_MESSAGE', {id:msg.id});
+                if (entry.isIntersecting) {
+                    timerID = setTimeout(HoverEvent, 2000);
                 }
             });
                 
@@ -32,13 +39,11 @@ export default function MessageItem({user_id, msg}) {
                 clearTimeout(timerID);
             }
         }
-    }, [dispatch, msg.reading, msg.id, isMyMsg])
-    const HoverEvent = (ev) => {
-        if(!isMyMsg && !msg.reading) dispatch(notifyReadMessage(msg.id))
-    }
-
+    }, [dispatch, msg.reading, msg.id, isMyMsg, HoverEvent])
+    
+    
     const getTime = (date) => {
-        const msgDate = new Date(date);
+        let msgDate = date ? new Date(date) : new Date();
         const diffTime = Math.floor((new Date() - msgDate)/1000);
         const min = Math.floor(diffTime / 60);
         
@@ -54,9 +59,15 @@ export default function MessageItem({user_id, msg}) {
         <div className={root_classes.join(' ')} ref={ref} >
             <div className='message-item' onMouseEnter={!isMyMsg && !msg.reading ? HoverEvent: null}>
             { !isMyMsg && <div>{userData.name} {getTime(msg.date)}</div> }
-                <div style={{display:'flex', flexDirection: 'row', alignItems:'center'}}>
-                    <div>{msg.text}</div>
-                    { isMyMsg && <MessageStatus statusServer={msg.status} statusReading={msg.reading}/> }
+                <div style={{display:'flex', flexDirection:'column'}}>
+                    <div style={{alignSelf:'start'}}>{msg.text}</div>
+                    {
+                        isMyMsg &&
+                        <div style={{display:'flex', alignItems:'center', justifyContent:'flex-end', flexDirection:'row'}}>
+                            {getTime(msg.date)}
+                            <MessageStatus statusServer={msg.status} statusReading={msg.reading}/> 
+                        </div>
+                    }
                 </div>
             </div>
         </div>

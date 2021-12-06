@@ -16,7 +16,6 @@ let postReqOpt = {
     },
 };
 
-//let tokenAPI = '';
 /**
  * @param {String} token
  */
@@ -25,11 +24,22 @@ export const SetToken = token => {
     postReqOpt.headers['token'] = token;
     reqOpt.headers['token'] = token;
 };
+
 /**
  * @param {Number} user_id
- */
+
 export const UserAuth = async (user_id) => {
     const response = await fetch(urlAPI + `/user/${user_id}`, reqOpt);
+    const users = await response.json();
+    return users;
+}
+ */
+
+/**
+ * Получить всех пользователей чата
+ */
+export const GetAllUsers = async () => {
+    const response = await fetch(urlAPI + `/user/all`, reqOpt);
     const users = await response.json();
     return users;
 }
@@ -55,6 +65,7 @@ export const GetUserChats = async (user_id) => {
 }
 
 /**
+ * Получить все сообщения в чате
  * @param {Number} chat_id
  */
 export const GetChatMessages = async (chat_id) => {
@@ -64,6 +75,7 @@ export const GetChatMessages = async (chat_id) => {
 }
 
 /**
+ * Отправить сообщение на сервер
  * @param {Number} chat_id
  * @param {Number} user_id
  * @param {String} text
@@ -76,6 +88,22 @@ export const SendServerMessage = async (chat_id, user_id, text) => {
         date: new Date()
     };
     const response = await fetch(urlAPI + `/chat/${chat_id}/create_message`, {
+        body: JSON.stringify(body),
+        ...postReqOpt
+    });
+    const result = await response.json();
+    return result;
+}
+/**
+ * Отправить запрос на создание чата
+ * @param {String} name
+ * @param {Array.<Number>} users
+ */
+export const CreateChat = async (name, users) => {
+    const body = {
+        name, users
+    }
+    const response = await fetch(urlAPI + `/chat/create`, {
         body: JSON.stringify(body),
         ...postReqOpt
     });

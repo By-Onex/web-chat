@@ -18,11 +18,21 @@
     width: 50%;
     box-sizing: content-box;
 }
-.modal_window > * {
+.modal_window >form> * {
     margin-top: 10px;
+}
+.modal_window >form> input {
+   width: 100%;
 }
 .active {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+ul {
+    list-style: none;
+}
+ul > li > input {
+    margin-right: 15px;
 }

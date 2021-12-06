@@ -27,13 +27,14 @@
 
 .chat-bottom {
     background: #ebf0f3;
-    padding: 10px;
     display: flex;
+    padding: 10px;
     flex-direction: row;
     border: 2px solid #dedfe3;
     border-left: none;
     justify-content: space-between;
     align-items: center;
+    
 }
 
 .chat-bottom-button {
@@ -70,6 +71,7 @@
     align-items: center;
     justify-content: center;
 }
+
 .chat-info-body {
     border: 2px solid #dedfe3;
     border-radius: 20px;

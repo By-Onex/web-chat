@@ -5,4 +5,5 @@
     width: fit-content;
     cursor: pointer;
     border-radius: 3px;
+    align-self: center;
 }

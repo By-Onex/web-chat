@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as api from '../API/ApiDB';
 import { addMessage, changeMessage, setCurrentMessage } from '../store/chatSlice';
@@ -15,9 +15,10 @@ export default function ChatForm() {
     const dispatch = useDispatch();
     //Инпут чата
     const currentMessage = useSelector(state => state.chat.currentMessage);
-    //const [myMessage, setMyMessage] = useState('');
-    const currentChat = useSelector(state => state.chat.current);
     
+    const currentChat = useSelector(state => state.chat.current);
+    const ref = useRef();
+    const [currentHeight, setCurrentHeight] = useState(0);
     const SendMessage = async () => {
         if(!currentChat) return;
         let message = {
@@ -35,15 +36,33 @@ export default function ChatForm() {
         dispatch(changeMessage(result));
     }
     
+    let curH = currentHeight;
+    const style = {
+        marginBottom:-curH
+    }
+    
+    if(currentChat) {
+        style.transition ='margin-bottom 1s';
+        style.marginBottom = 0;
+    }
+
+    useEffect(() => {
+        if(!ref.current) return;
+        setCurrentHeight(ref.current.offsetHeight);
+    }, []);
+
     return (
-        <div className='chat-form'>
+        <div className='chat-form' >
            <MessageList />
-            <div className='chat-bottom'>
-                <MyInput value={currentMessage} placeholder={'Сообщение'}
-                    onKeyUp={(e) => { if (e.key === "Enter") {SendMessage()} }}
-                    onChange={(e) => dispatch(setCurrentMessage(e.target.value))}
-                />
-                <div className='chat-bottom-button' onClick={SendMessage}>{'>'}</div>
-            </div>
+           
+            <div className='chat-bottom' ref={ref} style={style}>
+                    <MyInput value={currentMessage} placeholder={'Сообщение'}
+                        onKeyUp={(e) => { if (e.key === "Enter") {SendMessage()} }}
+                        onChange={(e) => dispatch(setCurrentMessage(e.target.value))}
+                    />
+                    <div className='chat-bottom-button' onClick={SendMessage}>{'>'}</div>
+                </div>
+          
+           
         </div>)
 }

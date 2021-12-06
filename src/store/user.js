@@ -6,7 +6,8 @@ import { SetToken } from "../API/ApiDB";
 const userSlice = createSlice({
     name: "user",
     initialState: {
-        user: null
+        user: null,
+       
     },
     reducers: {
         login: (state, action) => {

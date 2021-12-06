@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import {setChatMessages, setChatUsers, findAllMessages} from '../store/chatSlice';
+import { setChatMessages, setChatUsers, findCurrentChat } from '../store/chatSlice';
 
 import MessageItem from './MessageItem';
 import MyLoader from './MyLoaderd/MyLoader';
@@ -14,27 +14,28 @@ export default function MessageList() {
 	const dispatch = useDispatch();
 
 	const user = useSelector(store => store.user.user);
-	const currentChat = useSelector(store => store.chat.current);
-	const messages = useSelector(store => findAllMessages(store));
-	
+	//const currentChat = useSelector(store => store.chat.current);
+	const chat = useSelector(store => findCurrentChat(store));
+
 	useEffect(() => {
 		const fetchData = async () => {
-			setIsLoadingMessages(true);
-			const users = await api.GetUsersInChat(currentChat);
-			const messages = await api.GetChatMessages(currentChat);
+			const users = await api.GetUsersInChat(chat.id);
+			const messages = await api.GetChatMessages(chat.id);
 			messages.map(m => {
 				m.status = true;
 				return m;
 			})
 			dispatch(setChatUsers(users));
-			dispatch(setChatMessages(messages));
+			dispatch(setChatMessages({ messages, chat_id: chat.id }));
 			setIsLoadingMessages(false);
 		}
-		if(user && currentChat && messages && messages.length === 0)
+		if (user && chat && !chat.loading) {
+			setIsLoadingMessages(true);
 			fetchData();
+		}
 		else setIsLoadingMessages(false);
-	}, [currentChat, dispatch, messages, user]);
-	
+	}, [chat, dispatch, user]);
+
 	let body;
 
 	if (isLoadingMessages) {
@@ -42,25 +43,25 @@ export default function MessageList() {
 	}
 	else if (!user) {
 		body =
-		<div className='chat-info'>
-			<h1 className='chat-info-body'>Авторизуйтесь чтобы пользоваться чатом</h1>
-		</div>;
+			<div className='chat-info'>
+				<h1 className='chat-info-body'>Авторизуйтесь чтобы пользоваться чатом</h1>
+			</div>;
 	}
-	else if (!currentChat)
+	else if (!chat)
 		body = <div className='chat-info'>
 			<h1 className='chat-info-body'>Выберите чат</h1>
 		</div>;
-	else if(messages.length === 0) {
+	else if (chat.messages.length === 0) {
 		body =
-		<div className='chat-info'>
-			<h1 className='chat-info-body'>Тут пусто</h1>
-		</div>;
-	}else {
-		let time = new Date();
+			<div className='chat-info'>
+				<h1 className='chat-info-body'>Тут пусто</h1>
+			</div>;
+	} else {
+		let time = null;
 		body = [];
-		messages.forEach(m => {
-			const msgDate = new Date(m.date);
-			if(time.toLocaleDateString() !== msgDate.toLocaleDateString()) {
+		chat.messages.forEach(m => {
+			const msgDate = m.date ? new Date(m.date) : new Date();
+			if (time?.toLocaleDateString() !== msgDate.toLocaleDateString()) {
 				time = msgDate;
 				body.push(<div className='message-list-day' key={time.toLocaleDateString()}>{time.toLocaleDateString()}</div>);
 			}
@@ -68,5 +69,4 @@ export default function MessageList() {
 		});
 	}
 	return <div className='message-list'> {body} </div>;
-
 }
